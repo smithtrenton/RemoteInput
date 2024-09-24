@@ -39,7 +39,7 @@ void PyGCQueue::flush()
         {
             results.push_back(std::move(objects.extract(it++).value()));
         }
-        Reflect_Release_Objects(eios.get(), &results[0], results.size());
+        Reflect_Release_Objects(eios, &results[0], results.size());
         objects.clear();
     }
 }

@@ -18,11 +18,11 @@ public:
     void flush();
 
 private:
-    std::shared_ptr<EIOS> eios;
+    EIOS* eios;
     size_t max_size;
     std::unordered_set<jobject> objects;
 
-    static const std::size_t DEFAULT_MAX_SIZE = 5000;
+    static const std::size_t DEFAULT_MAX_SIZE = 10000;
 };
 
 #endif //REMOTEINPUT_PYTHONGCQUEUE_HXX
