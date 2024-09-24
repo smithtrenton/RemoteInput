@@ -26,12 +26,15 @@ PyRemoteInputType GetObjectType(PyObject* object) noexcept
 
 PyObject* PythonWrapEIOS(EIOS* eios) noexcept
 {
+    printf("wrap\n");
     if (eios)
     {
+        printf("eios is real\n");
         PyEIOS* py_eios = (python->PyObject_New<PyEIOS>)(PyEIOS_Type());
         py_eios->pid = eios->pid;
         py_eios->native_eios = eios;
         py_eios->gc_queue = std::make_unique<PyGCQueue>(eios);
+        printf("finished pyeios create\n");
         return reinterpret_cast<PyObject*>(py_eios);
     }
 

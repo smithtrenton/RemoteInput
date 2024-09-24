@@ -4,6 +4,7 @@
 #include <EIOS.hxx>
 #include <NativePlugin.hxx>
 
+#include <iostream>
 #include <unordered_set>
 
 class PyGCQueue

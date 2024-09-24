@@ -28,6 +28,7 @@
 #include <tuple>
 #include <functional>
 #include <string>
+#include <iostream>
 
 #include "JNI_Common.hxx"
 #include "TypeTraits.hxx"

@@ -1,15 +1,24 @@
 #include "PythonGCQueue.hxx"
 
-PyGCQueue::PyGCQueue(EIOS* eios, size_t max_size) : eios(eios), max_size(max_size) {}
+PyGCQueue::PyGCQueue(EIOS* eios, size_t max_size) : eios(eios), max_size(max_size)
+{
+    std::cout << "new" << std::endl;
+}
 
-PyGCQueue::PyGCQueue(EIOS* eios) : eios(eios), max_size(PyGCQueue::DEFAULT_MAX_SIZE) {}
+PyGCQueue::PyGCQueue(EIOS* eios) : eios(eios), max_size(PyGCQueue::DEFAULT_MAX_SIZE)
+{
+    std::cout << "new default" << std::endl;
+}
 
-PyGCQueue::~PyGCQueue() {
-    eios = nullptr;
+PyGCQueue::~PyGCQueue()
+{
+    std::cout << "del" << std::endl;
+    // eios = nullptr;
 }
 
 void PyGCQueue::add(jobject object)
 {
+    std::cout << "add" << std::endl;
     if (object != nullptr)
     {
         objects.insert(object);
@@ -22,6 +31,7 @@ void PyGCQueue::add(jobject object)
 
 void PyGCQueue::flush()
 {
+    std::cout << "flush" << std::endl;
     if (objects.size() > 0) {
         std::vector<jobject> results;
         results.reserve(objects.size());

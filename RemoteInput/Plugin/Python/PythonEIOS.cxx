@@ -13,6 +13,7 @@
 
 int PyEIOS_Clear(PyObject* object)
 {
+    printf("clear\n");
     PyEIOS* py_eios = reinterpret_cast<PyEIOS*>(object);
     py_eios->pid = -1;
     py_eios->native_eios = nullptr;
@@ -22,6 +23,7 @@ int PyEIOS_Clear(PyObject* object)
 
 void PyEIOS_Dealloc(PyObject* object)
 {
+    printf("dealloc\n");
     PyEIOS* py_eios = reinterpret_cast<PyEIOS*>(object);
     py_eios->gc_queue->flush();
     EIOS_ReleaseTarget(py_eios->native_eios);

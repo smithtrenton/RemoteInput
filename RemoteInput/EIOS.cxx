@@ -304,10 +304,12 @@ void STD_CALL EIOS_SetGraphicsScaling(EIOS* eios, bool enabled) noexcept
 
 EIOS* STD_CALL EIOS_PairClient(std::int32_t pid) noexcept
 {
+    printf("start pair\n");
     std::int32_t tid = GetCurrentThreadID();
 
     if (clients.count(pid))
     {
+        printf("pid found\n");
         EIOS* eios = clients[pid];
         return eios->control_center->parent_thread_id() == tid ? eios : nullptr;
     }
@@ -320,6 +322,7 @@ EIOS* STD_CALL EIOS_PairClient(std::int32_t pid) noexcept
     }
 
     try {
+        printf("creating eios\n");
         std::unique_ptr<ControlCenter> control_center = std::make_unique<ControlCenter>(pid, true, nullptr);
         if (control_center)
         {
@@ -330,6 +333,7 @@ EIOS* STD_CALL EIOS_PairClient(std::int32_t pid) noexcept
             eios->control_center->set_parent_thread_id(tid);
 
             clients[pid] = eios;
+            printf("done creating eios\n");
             return eios;
         }
     }
@@ -439,7 +443,7 @@ EIOS* SimbaPluginTarget_RequestWithDebugImage(const char* initargs, void** image
         eios->control_center->set_image_format(ImageFormat::BGRA);
         eios->control_center->set_debug_graphics(true);
         *image = PLUGIN_SIMBA_METHODS.ExternalImage_Create(true);
-        PLUGIN_SIMBA_METHODS.ExternalImage_SetMemory(*image, eios->control_center->get_debug_image(), width, height);         
+        PLUGIN_SIMBA_METHODS.ExternalImage_SetMemory(*image, eios->control_center->get_debug_image(), width, height);
     }
 
     return eios;
@@ -457,11 +461,11 @@ void SimbaPluginTarget_GetDimensions(EIOS* eios, std::int32_t* width, std::int32
 
 bool SimbaPluginTarget_GetImageData(EIOS* eios, std::int32_t x, std::int32_t y, std::int32_t width, std::int32_t height, void** bgra, std::int32_t* data_width) noexcept
 {
-    if (eios) 
+    if (eios)
     {
         *data_width = eios->control_center->get_target_width();
         *bgra = &eios->control_center->get_image()[(y * (*data_width) + x) * 4];
-        
+
         return true;
     } else {
         return false;
