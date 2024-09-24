@@ -98,8 +98,79 @@ pybind11::object python_create_array(const std::shared_ptr<PyJavaArray>& self, j
     }
     return pybind11::none();
 }
+
+PyTypeObject* PyEIOS_Type() noexcept
+{
+    return pybind11::detail::get_type_info(typeid(PyEIOS))->type;
+}
+
+PyTypeObject* PyJavaObject_Type() noexcept
+{
+    return pybind11::detail::get_type_info(typeid(PyJavaObject))->type;
+}
+
+PyTypeObject* PyJavaArray_Type() noexcept
+{
+    return pybind11::detail::get_type_info(typeid(PyJavaArray))->type;
+}
+
+std::string Py_Type_Name(PyObject* object) noexcept
+{
+    return Py_TYPE(object)->tp_name;
+}
+
+PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept
+{
+    if (pybind11::isinstance<PyEIOS>(object))
+    {
+        return PyRemoteInputType::EIOS;
+    }
+
+    if (pybind11::isinstance<PyJavaObject>(object))
+    {
+        return PyRemoteInputType::JAVA_OBJECT;
+    }
+
+    if (pybind11::isinstance<PyJavaArray>(object))
+    {
+        return PyRemoteInputType::JAVA_ARRAY;
+    }
+
+    return PyRemoteInputType::OTHER;
+}
+
+PyEIOS::~PyEIOS()
+{
+    if (native_eios)
+    {
+        EIOS_ReleaseTarget(this->native_eios);
+        this->native_eios = nullptr;
+    }
+}
+
+PyJavaObject::~PyJavaObject()
+{
+    if (this->eios && this->object)
+    {
+        this->eios->native_eios->control_center->reflect_release_object(this->object);
+        this->object = nullptr;
+        this->eios = nullptr;
+        this->object = nullptr;
+    }
+}
+
+PyJavaArray::~PyJavaArray()
+{
+    if (this->eios && this->array)
+    {
+        this->eios->native_eios->control_center->reflect_release_object(this->array);
+        this->eios = nullptr;
+        this->array = nullptr;
+        this->size = 0;
+    }
+}
 #else
-PyRemoteInputType GetObjectType(PyObject* object) noexcept
+PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept
 {
     if ((python->Py_IS_TYPE)(object, PyEIOS_Type()))
     {
@@ -144,7 +215,7 @@ EIOS* PythonUnwrapEIOS(PyEIOS* eios) noexcept
 
 PyEIOS* PythonGetEIOS(PyObject* object)
 {
-    PyRemoteInputType type = GetObjectType(object);
+    PyRemoteInputType type = GetPythonObjectType(object);
     switch (type)
     {
         case PyRemoteInputType::EIOS:
@@ -184,7 +255,7 @@ jobject PythonUnwrapJavaObject(PyJavaObject* object) noexcept
         return nullptr;
     }
 
-    if (GetObjectType(reinterpret_cast<PyObject*>(object)) != PyRemoteInputType::JAVA_OBJECT)
+    if (GetPythonObjectType(reinterpret_cast<PyObject*>(object)) != PyRemoteInputType::JAVA_OBJECT)
     {
         return nullptr;
     }
@@ -216,7 +287,7 @@ jarray PythonUnwrapJavaArray(PyJavaArray* array) noexcept
         return nullptr;
     }
 
-    if (GetObjectType(reinterpret_cast<PyObject*>(array)) != PyRemoteInputType::JAVA_ARRAY)
+    if (GetPythonObjectType(reinterpret_cast<PyObject*>(array)) != PyRemoteInputType::JAVA_ARRAY)
     {
         return nullptr;
     }

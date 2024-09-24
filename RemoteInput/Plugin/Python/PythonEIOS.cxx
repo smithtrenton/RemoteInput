@@ -296,7 +296,7 @@ pybind11::object Python_EIOS_Reflect_Array(const std::shared_ptr<PyEIOS>& self, 
     return python_create_array(self, array, array_size);
 }
 
-void Python_Reflect_Objects(const std::shared_ptr<PyEIOS>& self, pybind11::object object) noexcept
+void Python_Reflect_Release_Objects(const std::shared_ptr<PyEIOS>& self, const pybind11::object& object) noexcept
 {
     // Flatten the List
     std::stack<pybind11::handle> stack;
@@ -438,7 +438,7 @@ void declare_python_eios(pybind11::module_ &module)
         .def("reflect_double", &Python_EIOS_Reflect_Double, pybind11::arg("cls"), pybind11::arg("field"))
         .def("reflect_string", &Python_EIOS_Reflect_String, pybind11::arg("cls"), pybind11::arg("field"))
         .def("reflect_array", &Python_EIOS_Reflect_Array, pybind11::arg("cls"), pybind11::arg("field"), pybind11::arg("desc"))
-        .def("release_objects", &Python_Reflect_Objects)
+        .def("release_objects", &Python_Reflect_Release_Objects)
         .def("__str__", &PyEIOS_Str);
 }
 #else
@@ -1346,7 +1346,7 @@ PyObject* Python_Reflect_Release_Objects(PyEIOS* self, PyObject* args[], Py_ssiz
 
     for (PyObject* object : objects)
     {
-        PyRemoteInputType type = GetObjectType(object);
+        PyRemoteInputType type = GetPythonObjectType(object);
         if (type == PyRemoteInputType::JAVA_OBJECT)
         {
             if (!self)

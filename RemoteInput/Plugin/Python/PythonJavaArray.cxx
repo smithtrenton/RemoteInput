@@ -3,6 +3,7 @@
 //
 
 #include "PythonJavaArray.hxx"
+#include "PythonJavaList.hxx"
 
 #include <sstream>
 #include <ios>
@@ -13,7 +14,7 @@
 #endif
 
 #if defined(USE_PYBIND11)
-pybind11::object read_array_type(Stream &stream, const std::shared_ptr<PyJavaArray>& self, ReflectionType type, std::size_t dimensions);
+pybind11::object read_array_type(Stream &stream, const std::shared_ptr<PyJavaArray>& object, ReflectionType type, std::size_t dimensions);
 
 pybind11::object Python_JavaArray_GetLength(const std::shared_ptr<PyJavaArray>& self) noexcept
 {
@@ -23,7 +24,7 @@ pybind11::object Python_JavaArray_GetLength(const std::shared_ptr<PyJavaArray>& 
     return pybind11::int_(length);
 }
 
-pybind11::object Python_JavaArray_Get1D(const std::shared_ptr<PyJavaArray>& self, pybind11::object type_object, pybind11::object indices_object, pybind11::object index_object, pybind11::object length_object) noexcept
+pybind11::object Python_JavaArray_Get1D(const std::shared_ptr<PyJavaArray>& self, const pybind11::object& type_object, const pybind11::object& indices_object, const pybind11::object& index_object, const pybind11::object& length_object) noexcept
 {
     ReflectionType type = ReflectionType::OBJECT;
     if (!type_object.is_none())
@@ -75,7 +76,7 @@ pybind11::object Python_JavaArray_Get1D(const std::shared_ptr<PyJavaArray>& self
     return read_array_type(stream, self, type, 1);
 }
 
-pybind11::object Python_JavaArray_Get2D(const std::shared_ptr<PyJavaArray>& self, pybind11::object type_object, pybind11::object x_object, pybind11::object y_object) noexcept
+pybind11::object Python_JavaArray_Get2D(const std::shared_ptr<PyJavaArray>& self, const pybind11::object& type_object, const pybind11::object& x_object, const pybind11::object& y_object) noexcept
 {
     ReflectionType type = ReflectionType::OBJECT;
     if (!type_object.is_none())
@@ -101,7 +102,7 @@ pybind11::object Python_JavaArray_Get2D(const std::shared_ptr<PyJavaArray>& self
     return read_array_type(stream, self, type, 2);
 }
 
-pybind11::object Python_JavaArray_Get3D(const std::shared_ptr<PyJavaArray>& self, pybind11::object type_object, pybind11::object x_object, pybind11::object y_object, pybind11::object z_object) noexcept
+pybind11::object Python_JavaArray_Get3D(const std::shared_ptr<PyJavaArray>& self, const pybind11::object& type_object, const pybind11::object& x_object, const pybind11::object& y_object, const pybind11::object& z_object) noexcept
 {
     ReflectionType type = ReflectionType::OBJECT;
     if (!type_object.is_none())
@@ -128,7 +129,7 @@ pybind11::object Python_JavaArray_Get3D(const std::shared_ptr<PyJavaArray>& self
     return read_array_type(stream, self, type, 3);
 }
 
-pybind11::object Python_JavaArray_Get4D(const std::shared_ptr<PyJavaArray>& self, pybind11::object type_object, pybind11::object x_object, pybind11::object y_object, pybind11::object z_object, pybind11::object w_object) noexcept
+pybind11::object Python_JavaArray_Get4D(const std::shared_ptr<PyJavaArray>& self, const pybind11::object& type_object, const pybind11::object& x_object, const pybind11::object& y_object, const pybind11::object& z_object, const pybind11::object& w_object) noexcept
 {
     ReflectionType type = ReflectionType::OBJECT;
     if (!type_object.is_none())
@@ -239,7 +240,7 @@ pybind11::object read_array_type(Stream &stream, const std::shared_ptr<PyJavaArr
     else if constexpr(std::is_same<T, jobject>::value)
     {
         std::size_t length = stream.read<std::size_t>();
-        pybind11::list list = pybind11::list(length);
+        pybind11::list list = pybind11::reinterpret_steal<pybind11::list>(create_java_list(length));
         for (std::size_t i = 0; i < length; ++i)
         {
             list[i] = python_create_object(array, stream.read<jobject>());
@@ -249,7 +250,7 @@ pybind11::object read_array_type(Stream &stream, const std::shared_ptr<PyJavaArr
     else if constexpr(std::is_same<T, jarray>::value)
     {
         std::size_t length = stream.read<std::size_t>();
-        pybind11::list list = pybind11::list(length);
+        pybind11::list list = pybind11::reinterpret_steal<pybind11::list>(create_java_list(length));
         for (std::size_t i = 0; i < length; ++i)
         {
             list[i] = python_create_array(array, stream.read<jarray>(), length);
@@ -319,8 +320,6 @@ pybind11::object read_array_type(Stream &stream, const std::shared_ptr<PyJavaArr
     return list;
 }
 #else
-
-
 int PyJavaArray_Clear(PyObject* object)
 {
     PyJavaArray* py_java_array = reinterpret_cast<PyJavaArray*>(object);
@@ -678,7 +677,7 @@ PyObject* Python_JavaArray_Release_Object(PyJavaArray* self, PyObject* args[], P
 template<typename T>
 PyObject* read_array_type(Stream &stream, PyJavaArray* object)
 {
-    extern PyObject* create_java_list(PyEIOS* eios, Py_ssize_t length);
+    extern PyObject* create_java_list(Py_ssize_t length);
 
     if constexpr(std::is_same<T, std::string>::value)
     {
@@ -691,7 +690,7 @@ PyObject* read_array_type(Stream &stream, PyJavaArray* object)
     else if constexpr(std::is_same<T, jobject>::value)
     {
         std::size_t length = stream.read<std::size_t>();
-        PyObject* list = create_java_list(PythonGetEIOS(reinterpret_cast<PyObject*>(object)), length); //python->PyList_New(length);
+        PyObject* list = create_java_list(length); //python->PyList_New(length);
         for (std::size_t i = 0; i < length; ++i)
         {
             python->PyList_SetItem(list, i, python_create_object(object, stream.read<jobject>()));
@@ -701,7 +700,7 @@ PyObject* read_array_type(Stream &stream, PyJavaArray* object)
     else if constexpr(std::is_same<T, jarray>::value)
     {
         std::size_t length = stream.read<std::size_t>();
-        PyObject* list = create_java_list(PythonGetEIOS(reinterpret_cast<PyObject*>(object)), length); //python->PyList_New(length);
+        PyObject* list = create_java_list(length); //python->PyList_New(length);
         for (std::size_t i = 0; i < length; ++i)
         {
             python->PyList_SetItem(list, i, python_create_array(object, stream.read<jarray>(), length));

@@ -16,7 +16,7 @@
 #if defined(USE_PYBIND11)
 void PrintPythonVersionInfo()
 {
-    fprintf(stdout, "RUNNING WITH: %zu.%zu.%zu\n", Py_Version >> 24 & 0xFF, Py_Version >> 16 & 0xFF, Py_Version >> 8 & 0xFF);
+    fprintf(stdout, "RUNNING WITH: %s\n", PY_VERSION);
     fprintf(stdout, "COMPILED WITH: %d.%d.%d\n", PY_MAJOR_VERSION, PY_MINOR_VERSION, PY_MICRO_VERSION);
     fflush(stdout);
 }

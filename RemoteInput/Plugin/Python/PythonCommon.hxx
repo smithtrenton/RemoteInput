@@ -37,24 +37,32 @@ struct PyEIOS
 
     std::int32_t pid;
     EIOS* native_eios;
+
+    #if defined(USE_PYBIND11)
+    ~PyEIOS();
+    #endif
 };
 
 struct PyJavaObject
 {
     #if defined(USE_PYBIND11)
-    std::shared_ptr<PyEIOS> eios;
+    PyEIOS* eios;
     jobject object;
     #else
     PyObject_HEAD
     PyEIOS* eios;
     jobject object;
     #endif
+
+    #if defined(USE_PYBIND11)
+    ~PyJavaObject();
+    #endif
 };
 
 struct PyJavaArray
 {
     #if defined(USE_PYBIND11)
-    std::shared_ptr<PyEIOS> eios;
+    PyEIOS* eios;
     jarray array;
     std::size_t size;
     #else
@@ -62,6 +70,10 @@ struct PyJavaArray
     PyEIOS* eios;
     jarray array;
     std::size_t size;
+    #endif
+
+    #if defined(USE_PYBIND11)
+    ~PyJavaArray();
     #endif
 };
 
@@ -74,12 +86,13 @@ pybind11::object python_create_object(const std::shared_ptr<PyJavaArray>& self, 
 pybind11::object python_create_array(const std::shared_ptr<PyEIOS>& self, jarray array, std::size_t array_size) noexcept;
 pybind11::object python_create_array(const std::shared_ptr<PyJavaObject>& self, jarray array, std::size_t array_size) noexcept;
 pybind11::object python_create_array(const std::shared_ptr<PyJavaArray>& self, jarray array, std::size_t array_size) noexcept;
+PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept;
 #else
 extern PyTypeObject* PyEIOS_Type() noexcept;
 extern PyTypeObject* PyJavaObject_Type() noexcept;
 extern PyTypeObject* PyJavaArray_Type() noexcept;
 
-PyRemoteInputType GetObjectType(PyObject* object) noexcept;
+PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept;
 
 PyObject* PythonWrapEIOS(EIOS* eios) noexcept;
 EIOS* PythonUnwrapEIOS(PyEIOS* eios) noexcept;

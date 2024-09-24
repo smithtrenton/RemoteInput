@@ -43,16 +43,18 @@ IF(PYTHON_BINDINGS)
 
         IF(USE_PYTHON3)
             find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+            set(PY_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
             set(PY_LIBRARIES ${Python3_LIBRARIES})
             set(PY_LIBRARIES ${Python3_LIBRARY_DIRS})
             set(PY_LINK_OPTIONS ${Python3_LINK_OPTIONS})
-            set(PY_DYNAMIC_LINKER_FLAGS ${PYTHON3_DYNAMIC_LINKER_FLAGS})
+            set(PY_DYNAMIC_LINKER_FLAGS ${Python3_DYNAMIC_LINKER_FLAGS})
         ELSE()
             find_package(Python REQUIRED COMPONENTS Interpreter Development)
+            set(PY_INCLUDE_DIRS ${Python_INCLUDE_DIRS})
             set(PY_LIBRARIES ${Python_LIBRARIES})
             set(PY_LIBRARY_DIRS ${Python_LIBRARY_DIRS})
             set(PY_LINK_OPTIONS ${Python_LINK_OPTIONS})
-            set(PY_DYNAMIC_LINKER_FLAGS ${PYTHON_DYNAMIC_LINKER_FLAGS})
+            set(PY_DYNAMIC_LINKER_FLAGS ${Python_DYNAMIC_LINKER_FLAGS})
         ENDIF()
 
         IF(USE_SYSTEM_PYBIND11)
@@ -60,7 +62,13 @@ IF(PYTHON_BINDINGS)
         ENDIF()
     ELSE()
         find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter Development)
+        set(PY_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
+        set(PY_LIBRARIES ${Python3_LIBRARIES})
+        set(PY_LIBRARY_DIRS ${Python3_LIBRARY_DIRS})
+        set(PY_LINK_OPTIONS ${Python3_LINK_OPTIONS})
+        set(PY_DYNAMIC_LINKER_FLAGS ${Python3_DYNAMIC_LINKER_FLAGS})
     ENDIF()
+    MESSAGE(STATUS, "${PY_INCLUDE_DIRS}")
     MESSAGE(STATUS, "${PY_LIBRARIES}")
     MESSAGE(STATUS, "${PY_LIBRARY_DIRS}")
     MESSAGE(STATUS, "${PY_DYNAMIC_LINKER_FLAGS}")
@@ -76,7 +84,7 @@ set(INCLUDE_DIRECTORIES
         RemoteInput/Plugin
         RemoteInput/Plugin/JVM
         ${JNI_INCLUDE_DIRS}
-        ${Python_INCLUDE_DIRS})
+        ${PY_INCLUDE_DIRS})
 
 
 # ----------------------------- PLATFORM -----------------------------
