@@ -22,15 +22,15 @@ int PyJavaObject_Clear(PyObject* object)
 
 void PyJavaObject_Dealloc(PyObject* object)
 {
-    PyJavaObject* py_java_object = reinterpret_cast<PyJavaObject *>(object);
-    if (py_java_object->eios && py_java_object->object)
+    PyJavaObject* py_java_object = reinterpret_cast<PyJavaObject*>(object);
+    jobject java_object = py_java_object->object;
+
+    if (py_java_object && java_object)
     {
-        Reflect_Release_Object(PythonUnwrapEIOS(py_java_object->eios), py_java_object->object);
+        py_java_object->eios->gc_queue->add(java_object);
     }
 
-    // PyObject_GC_UnTrack(object);
     PyJavaObject_Clear(object);
-    //PyObject_Del(object);  // NO GC!
     python->PyObject_Free(object);
 }
 

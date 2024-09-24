@@ -33,6 +33,7 @@
 #include "TypeTraits.hxx"
 #include "TypeTraits_Functional.hxx"
 #include "EIOS.hxx"
+#include "PythonGCQueue.hxx"
 
 // STRUCTURES
 enum class PyRemoteInputType
@@ -48,6 +49,7 @@ struct PyEIOS
     PyObject_HEAD
     std::int32_t pid;
     EIOS* native_eios;
+    std::unique_ptr<PyGCQueue> gc_queue;
 };
 
 struct PyJavaObject

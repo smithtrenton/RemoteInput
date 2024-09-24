@@ -262,6 +262,8 @@ ENDIF()
 IF(PYTHON_BINDINGS)
     set(SRC_LIST
             ${SRC_LIST}
+            RemoteInput/Plugin/Python/PythonGCQueue.cxx
+            RemoteInput/Plugin/Python/PythonGCQueue.hxx
             RemoteInput/Plugin/Python/PythonCommon.cxx
             RemoteInput/Plugin/Python/PythonCommon.hxx
             RemoteInput/Plugin/Python/PythonPlugin.cxx
