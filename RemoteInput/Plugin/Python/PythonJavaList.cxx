@@ -35,7 +35,7 @@ void PyList_Dealloc(PyObject* self)
 
                     if (!eios)
                     {
-                        eios = py_java_object->eios.get();
+                        eios = py_java_object->eios;
                     }
                 }
                 else if (type == PyRemoteInputType::JAVA_ARRAY)
@@ -46,7 +46,7 @@ void PyList_Dealloc(PyObject* self)
 
                     if (!eios)
                     {
-                        eios = py_java_array->eios.get();
+                        eios = py_java_array->eios;
                     }
                 }
             }

@@ -8,7 +8,7 @@
 #include "PythonCommon.hxx"
 
 #if defined(USE_PYBIND11)
-void declare_python_java_object(pybind11::module_ &module);
+void declare_python_java_object(nanobind::module_ &module);
 #else
 PyObject* Python_Reflect_Object(PyJavaObject* self, PyObject* args[], Py_ssize_t args_length) noexcept;
 PyObject* Python_Reflect_IsSame_Object(PyJavaObject* self, PyObject* args[], Py_ssize_t args_length) noexcept;

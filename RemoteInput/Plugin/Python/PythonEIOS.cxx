@@ -22,175 +22,175 @@ void Python_EIOS_Inject_PID(std::int32_t pid) noexcept
     EIOS_Inject_PID(pid);
 }
 
-pybind11::object Python_EIOS_From_PID(std::int32_t pid) noexcept
+nanobind::object Python_EIOS_From_PID(std::int32_t pid) noexcept
 {
     return python_create_eios(EIOS_From_PID(pid));
 }
 
-pybind11::object Python_EIOS_RequestTarget(const std::string& pid) noexcept
+nanobind::object Python_EIOS_RequestTarget(const std::string& pid) noexcept
 {
     return python_create_eios(EIOS_RequestTarget(pid.c_str()));
 }
 
-pybind11::object Python_EIOS_GetTargetDimensions(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetTargetDimensions(PyEIOS* self) noexcept
 {
     std::int32_t width = 0;
     std::int32_t height = 0;
     EIOS_GetTargetDimensions(self->native_eios, &width, &height);
-    return pybind11::make_tuple(width, height);
+    return nanobind::make_tuple(width, height);
 }
 
-pybind11::object Python_EIOS_GetImageFormat(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetImageFormat(PyEIOS* self) noexcept
 {
     ImageFormat format = EIOS_GetImageFormat(self->native_eios);
-    return pybind11::cast(format);
+    return nanobind::cast(format);
 }
 
-void Python_EIOS_SetImageFormat(const std::shared_ptr<PyEIOS>& self, ImageFormat format) noexcept
+void Python_EIOS_SetImageFormat(PyEIOS* self, ImageFormat format) noexcept
 {
     EIOS_SetImageFormat(self->native_eios, format);
 }
 
-pybind11::object Python_EIOS_GetImageBuffer(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetImageBuffer(PyEIOS* self) noexcept
 {
     std::int32_t width = 0;
     std::int32_t height = 0;
     EIOS_GetTargetDimensions(self->native_eios, &width, &height);
     std::uint8_t* buffer = EIOS_GetImageBuffer(self->native_eios);
-    return pybind11::memoryview::from_memory(buffer, width * height * 4 * sizeof(std::uint8_t), false);
+    return nanobind::steal(PyMemoryView_FromMemory(reinterpret_cast<char*>(buffer), width * height * 4 * sizeof(std::uint8_t), PyBUF_READ | PyBUF_WRITE));
 }
 
-pybind11::object Python_EIOS_GetDebugImageBuffer(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetDebugImageBuffer(PyEIOS* self) noexcept
 {
     std::int32_t width = 0;
     std::int32_t height = 0;
     EIOS_GetTargetDimensions(self->native_eios, &width, &height);
     std::uint8_t* buffer = EIOS_GetDebugImageBuffer(self->native_eios);
-    return pybind11::memoryview::from_memory(buffer, width * height * 4 * sizeof(std::uint8_t), false);
+    return nanobind::steal(PyMemoryView_FromMemory(reinterpret_cast<char*>(buffer), width * height * 4 * sizeof(std::uint8_t), PyBUF_READ | PyBUF_WRITE));
 }
 
-void Python_EIOS_SetGraphicsDebugging(const std::shared_ptr<PyEIOS>& self, bool enabled) noexcept
+void Python_EIOS_SetGraphicsDebugging(PyEIOS* self, bool enabled) noexcept
 {
     EIOS_SetGraphicsDebugging(self->native_eios, enabled);
 }
 
-pybind11::object Python_EIOS_HasFocus(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_HasFocus(PyEIOS* self) noexcept
 {
-    return pybind11::bool_(EIOS_HasFocus(self->native_eios));
+    return nanobind::bool_(EIOS_HasFocus(self->native_eios));
 }
 
-void Python_EIOS_GainFocus(const std::shared_ptr<PyEIOS>& self) noexcept
+void Python_EIOS_GainFocus(PyEIOS* self) noexcept
 {
     EIOS_GainFocus(self->native_eios);
 }
 
-void Python_EIOS_LoseFocus(const std::shared_ptr<PyEIOS>& self) noexcept
+void Python_EIOS_LoseFocus(PyEIOS* self) noexcept
 {
     EIOS_LoseFocus(self->native_eios);
 }
 
-pybind11::object Python_EIOS_IsKeyboardInputEnabled(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_IsKeyboardInputEnabled(PyEIOS* self) noexcept
 {
-    return pybind11::bool_(EIOS_IsKeyboardInputEnabled(self->native_eios));
+    return nanobind::bool_(EIOS_IsKeyboardInputEnabled(self->native_eios));
 }
 
-void Python_EIOS_SetKeyboardInputEnabled(const std::shared_ptr<PyEIOS>& self, bool enabled) noexcept
+void Python_EIOS_SetKeyboardInputEnabled(PyEIOS* self, bool enabled) noexcept
 {
     EIOS_SetKeyboardInputEnabled(self->native_eios, enabled);
 }
 
-pybind11::object Python_EIOS_IsMouseInputEnabled(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_IsMouseInputEnabled(PyEIOS* self) noexcept
 {
-    return pybind11::bool_(EIOS_IsMouseInputEnabled(self->native_eios));
+    return nanobind::bool_(EIOS_IsMouseInputEnabled(self->native_eios));
 }
 
-void Python_EIOS_SetMouseInputEnabled(const std::shared_ptr<PyEIOS>& self, bool enabled) noexcept
+void Python_EIOS_SetMouseInputEnabled(PyEIOS* self, bool enabled) noexcept
 {
     EIOS_SetMouseInputEnabled(self->native_eios, enabled);
 }
 
-pybind11::object Python_EIOS_GetMousePosition(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetMousePosition(PyEIOS* self) noexcept
 {
     std::int32_t width = 0;
     std::int32_t height = 0;
     EIOS_GetMousePosition(self->native_eios, &width, &height);
-    return pybind11::make_tuple(width, height);
+    return nanobind::make_tuple(width, height);
 }
 
-pybind11::object Python_EIOS_GetRealMousePosition(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetRealMousePosition(PyEIOS* self) noexcept
 {
     std::int32_t width = 0;
     std::int32_t height = 0;
     EIOS_GetRealMousePosition(self->native_eios, &width, &height);
-    return pybind11::make_tuple(width, height);
+    return nanobind::make_tuple(width, height);
 }
 
-void Python_EIOS_MoveMouse(const std::shared_ptr<PyEIOS>& self, std::int32_t x, std::int32_t y) noexcept
+void Python_EIOS_MoveMouse(PyEIOS* self, std::int32_t x, std::int32_t y) noexcept
 {
     EIOS_MoveMouse(self->native_eios, x, y);
 }
 
-void Python_EIOS_HoldMouse(const std::shared_ptr<PyEIOS>& self, std::int32_t button) noexcept
+void Python_EIOS_HoldMouse(PyEIOS* self, std::int32_t button) noexcept
 {
     EIOS_HoldMouse(self->native_eios, 0, 0, button);
 }
 
-void Python_EIOS_ReleaseMouse(const std::shared_ptr<PyEIOS>& self, std::int32_t button) noexcept
+void Python_EIOS_ReleaseMouse(PyEIOS* self, std::int32_t button) noexcept
 {
     EIOS_ReleaseMouse(self->native_eios, 0, 0, button);
 }
 
-void Python_EIOS_ScrollMouse(const std::shared_ptr<PyEIOS>& self, std::int32_t lines) noexcept
+void Python_EIOS_ScrollMouse(PyEIOS* self, std::int32_t lines) noexcept
 {
     EIOS_ScrollMouse(self->native_eios, 0, 0, lines);
 }
 
-pybind11::object Python_EIOS_IsMouseButtonHeld(const std::shared_ptr<PyEIOS>& self, std::int32_t button) noexcept
+nanobind::object Python_EIOS_IsMouseButtonHeld(PyEIOS* self, std::int32_t button) noexcept
 {
-    return pybind11::bool_(EIOS_IsMouseButtonHeld(self->native_eios, button));
+    return nanobind::bool_(EIOS_IsMouseButtonHeld(self->native_eios, button));
 }
 
-void Python_EIOS_SendString(const std::shared_ptr<PyEIOS>& self, const std::string& text, std::int32_t key_wait, std::int32_t key_mod_wait) noexcept
+void Python_EIOS_SendString(PyEIOS* self, const std::string& text, std::int32_t key_wait, std::int32_t key_mod_wait) noexcept
 {
     EIOS_SendString(self->native_eios, text.c_str(), key_wait, key_mod_wait);
 }
 
-void Python_EIOS_HoldKey(const std::shared_ptr<PyEIOS>& self, std::int32_t key) noexcept
+void Python_EIOS_HoldKey(PyEIOS* self, std::int32_t key) noexcept
 {
     EIOS_HoldKey(self->native_eios, key);
 }
 
-void Python_EIOS_ReleaseKey(const std::shared_ptr<PyEIOS>& self, std::int32_t key) noexcept
+void Python_EIOS_ReleaseKey(PyEIOS* self, std::int32_t key) noexcept
 {
     EIOS_ReleaseKey(self->native_eios, key);
 }
 
-pybind11::object Python_EIOS_IsKeyHeld(const std::shared_ptr<PyEIOS>& self, std::int32_t key) noexcept
+nanobind::object Python_EIOS_IsKeyHeld(PyEIOS* self, std::int32_t key) noexcept
 {
-    return pybind11::bool_(EIOS_IsKeyHeld(self->native_eios, key));
+    return nanobind::bool_(EIOS_IsKeyHeld(self->native_eios, key));
 }
 
-pybind11::object Python_EIOS_GetKeyboardSpeed(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetKeyboardSpeed(PyEIOS* self) noexcept
 {
-    return pybind11::int_(EIOS_GetKeyboardSpeed(self->native_eios));
+    return nanobind::int_(EIOS_GetKeyboardSpeed(self->native_eios));
 }
 
-void Python_EIOS_SetKeyboardSpeed(const std::shared_ptr<PyEIOS>& self, std::int32_t speed) noexcept
+void Python_EIOS_SetKeyboardSpeed(PyEIOS* self, std::int32_t speed) noexcept
 {
     EIOS_SetKeyboardSpeed(self->native_eios, speed);
 }
 
-pybind11::object Python_EIOS_GetKeyboardRepeatDelay(const std::shared_ptr<PyEIOS>& self) noexcept
+nanobind::object Python_EIOS_GetKeyboardRepeatDelay(PyEIOS* self) noexcept
 {
-    return pybind11::int_(EIOS_GetKeyboardRepeatDelay(self->native_eios));
+    return nanobind::int_(EIOS_GetKeyboardRepeatDelay(self->native_eios));
 }
 
-void Python_EIOS_SetKeyboardRepeatDelay(const std::shared_ptr<PyEIOS>& self, std::int32_t delay) noexcept
+void Python_EIOS_SetKeyboardRepeatDelay(PyEIOS* self, std::int32_t delay) noexcept
 {
     EIOS_SetKeyboardRepeatDelay(self->native_eios, delay);
 }
 
-pybind11::object Python_EIOS_GetClientsPIDs(bool unpaired_only) noexcept
+nanobind::object Python_EIOS_GetClientsPIDs(bool unpaired_only) noexcept
 {
     std::size_t client_count = EIOS_GetClients(unpaired_only);
     std::vector<std::int32_t> client_pids(client_count);
@@ -199,10 +199,10 @@ pybind11::object Python_EIOS_GetClientsPIDs(bool unpaired_only) noexcept
     {
         client_pids[i] = EIOS_GetClientPID(i);
     }
-    return pybind11::cast(client_pids);
+    return nanobind::cast(client_pids);
 }
 
-pybind11::object Python_EIOS_PairClient_PID(std::int32_t pid) noexcept
+nanobind::object Python_EIOS_PairClient_PID(std::int32_t pid) noexcept
 {
     return python_create_eios(EIOS_PairClient(pid));
 }
@@ -212,112 +212,111 @@ void Python_EIOS_KillClientPID(std::int32_t pid) noexcept
     EIOS_KillClientPID(pid);
 }
 
-void Python_EIOS_KillClient(const std::shared_ptr<PyEIOS>& self) noexcept
+void Python_EIOS_KillClient(PyEIOS* self) noexcept
 {
     EIOS_KillClient(self->native_eios);
 }
 
-pybind11::object Python_EIOS_Reflect_Object(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field, const std::string& desc) noexcept
+nanobind::object Python_EIOS_Reflect_Object(PyEIOS* self, const std::string& cls, const std::string& field, const std::string& desc) noexcept
 {
     EIOS* eios = self->native_eios;
     jobject result = eios->control_center->reflect_object({nullptr, cls, field, desc});
     return python_create_object(self, result);
 }
 
-pybind11::object Python_EIOS_Reflect_Bool(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Bool(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     jboolean result = eios->control_center->reflect_boolean({nullptr, cls, field, "Z"});
-    return pybind11::bool_(result);
+    return nanobind::bool_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Char(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Char(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     char result = eios->control_center->reflect_char({nullptr, cls, field, "C"});
-    return pybind11::str(std::string(1, result));
+    return nanobind::cast(std::string(1, result));
 }
 
-pybind11::object Python_EIOS_Reflect_Byte(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Byte(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     std::uint8_t result = eios->control_center->reflect_byte({nullptr, cls, field, "B"});
-    return pybind11::int_(result);
+    return nanobind::int_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Short(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Short(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     std::int16_t result = eios->control_center->reflect_short({nullptr, cls, field, "S"});
-    return pybind11::int_(result);
+    return nanobind::int_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Int(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Int(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     std::int32_t result = eios->control_center->reflect_int({nullptr, cls, field, "I"});
-    return pybind11::int_(result);
+    return nanobind::int_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Long(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Long(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     std::int64_t result = eios->control_center->reflect_long({nullptr, cls, field, "J"});
-    return pybind11::int_(result);
+    return nanobind::int_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Float(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Float(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     float result = eios->control_center->reflect_float({nullptr, cls, field, "F"});
-    return pybind11::float_(result);
+    return nanobind::float_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Double(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_Double(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     double result = eios->control_center->reflect_double({nullptr, cls, field, "D"});
-    return pybind11::float_(result);
+    return nanobind::float_(result);
 }
 
-pybind11::object Python_EIOS_Reflect_String(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field) noexcept
+nanobind::object Python_EIOS_Reflect_String(PyEIOS* self, const std::string& cls, const std::string& field) noexcept
 {
     EIOS* eios = self->native_eios;
     std::string result = eios->control_center->reflect_string({nullptr, cls, field, "Ljava/lang/String;"});
-    return pybind11::str(result);
+    return nanobind::cast(result);
 }
 
-pybind11::object Python_EIOS_Reflect_Array(const std::shared_ptr<PyEIOS>& self, const std::string& cls, const std::string& field, const std::string& desc) noexcept
+nanobind::object Python_EIOS_Reflect_Array(PyEIOS* self, const std::string& cls, const std::string& field, const std::string& desc) noexcept
 {
     EIOS* eios = self->native_eios;
-
     std::size_t array_size = 0;
     jarray array = eios->control_center->reflect_array({nullptr, cls, field, desc}, &array_size);
     return python_create_array(self, array, array_size);
 }
 
-void Python_Reflect_Release_Objects(const std::shared_ptr<PyEIOS>& self, const pybind11::object& object) noexcept
+void Python_Reflect_Release_Objects(PyEIOS* self, const nanobind::object& object) noexcept
 {
     // Flatten the List
-    std::stack<pybind11::handle> stack;
-    std::vector<pybind11::handle> objects;
+    std::stack<nanobind::handle> stack;
+    std::vector<nanobind::handle> objects;
     stack.push(object);
 
     while (!stack.empty())
     {
-        pybind11::handle current = stack.top();
+        nanobind::handle current = stack.top();
         stack.pop();
 
-        if (pybind11::isinstance<pybind11::list>(current))
+        if (nanobind::isinstance<nanobind::list>(current))
         {
-            for (auto item : pybind11::cast<pybind11::list>(current))
+            for (auto item : nanobind::cast<nanobind::list>(current))
             {
                 stack.push(item);
             }
         }
         else
         {
-            if (current.ref_count() == 1)
+            if (Py_REFCNT(current.ptr()) == 1)
             {
                 objects.push_back(current);
             }
@@ -337,9 +336,9 @@ void Python_Reflect_Release_Objects(const std::shared_ptr<PyEIOS>& self, const p
 
     for (auto& handle : objects)
     {
-        if (pybind11::isinstance<PyJavaObject>(handle))
+        if (nanobind::isinstance<PyJavaObject>(handle))
         {
-            auto* java_object = pybind11::cast<PyJavaObject*>(handle);
+            auto* java_object = nanobind::cast<PyJavaObject*>(handle);
             if (!eios)
             {
                 eios = java_object->eios->native_eios;
@@ -348,9 +347,9 @@ void Python_Reflect_Release_Objects(const std::shared_ptr<PyEIOS>& self, const p
             result.push_back(java_object->object);
             handle.dec_ref();
         }
-        else if (pybind11::isinstance<PyJavaArray>(handle))
+        else if (nanobind::isinstance<PyJavaArray>(handle))
         {
-            auto* java_array = pybind11::cast<PyJavaArray*>(handle);
+            auto* java_array = nanobind::cast<PyJavaArray*>(handle);
             if (!eios)
             {
                 eios = java_array->eios->native_eios;
@@ -365,7 +364,7 @@ void Python_Reflect_Release_Objects(const std::shared_ptr<PyEIOS>& self, const p
     Reflect_Release_Objects(eios, &result[0], result.size());
 }
 
-pybind11::object PyEIOS_Str(const std::shared_ptr<PyEIOS>& self)
+nanobind::object PyEIOS_Str(PyEIOS* self)
 {
     std::ostringstream stream;
 
@@ -374,7 +373,7 @@ pybind11::object PyEIOS_Str(const std::shared_ptr<PyEIOS>& self)
 
     stream << std::setfill('0') << std::uppercase << std::hex;
     stream << "EIOS(";
-    stream << "0x" << reinterpret_cast<std::uintptr_t>(self.get());
+    stream << "0x" << reinterpret_cast<std::uintptr_t>(self);
     stream << "): ";
     stream.copyfmt(state);
 
@@ -382,15 +381,15 @@ pybind11::object PyEIOS_Str(const std::shared_ptr<PyEIOS>& self)
     stream<< "    pid: " << self->pid << "\n";
     stream<< "}";
 
-    return pybind11::str(stream.str());
+    return nanobind::cast(stream.str());
 }
 
-void declare_python_eios(pybind11::module_ &module)
+void declare_python_eios(nanobind::module_ &module)
 {
-    pybind11::class_<PyEIOS, std::shared_ptr<PyEIOS>>(module, "EIOS")
-        // .def(pybind11::init<>()) // Cannot instantiate from Python
-        .def_readonly("pid", &PyEIOS::pid)
-        .def_readonly("native_eios", &PyEIOS::native_eios)
+    nanobind::class_<PyEIOS>(module, "EIOS")
+        // .def(nanobind::init<>()) // Cannot instantiate from Python
+        .def_ro("pid", &PyEIOS::pid)
+        .def_ro("native_eios", &PyEIOS::native_eios)
         .def_static("inject", &Python_EIOS_Inject)
         .def_static("inject_pid", &Python_EIOS_Inject_PID)
         .def_static("from_pid", &Python_EIOS_From_PID)
@@ -427,17 +426,17 @@ void declare_python_eios(pybind11::module_ &module)
         .def_static("pair_client_pid", &Python_EIOS_PairClient_PID)
         .def_static("kill_client_pid", &Python_EIOS_KillClientPID)
         .def("kill_client", &Python_EIOS_KillClient)
-        .def("reflect_object", &Python_EIOS_Reflect_Object, pybind11::arg("cls"), pybind11::arg("field"), pybind11::arg("desc"))
-        .def("reflect_bool", &Python_EIOS_Reflect_Bool, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_char", &Python_EIOS_Reflect_Char, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_byte", &Python_EIOS_Reflect_Byte, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_short", &Python_EIOS_Reflect_Short, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_int", &Python_EIOS_Reflect_Int, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_long", &Python_EIOS_Reflect_Long, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_float", &Python_EIOS_Reflect_Float, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_double", &Python_EIOS_Reflect_Double, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_string", &Python_EIOS_Reflect_String, pybind11::arg("cls"), pybind11::arg("field"))
-        .def("reflect_array", &Python_EIOS_Reflect_Array, pybind11::arg("cls"), pybind11::arg("field"), pybind11::arg("desc"))
+        .def("reflect_object", &Python_EIOS_Reflect_Object, nanobind::arg("cls"), nanobind::arg("field"), nanobind::arg("desc"))
+        .def("reflect_bool", &Python_EIOS_Reflect_Bool, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_char", &Python_EIOS_Reflect_Char, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_byte", &Python_EIOS_Reflect_Byte, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_short", &Python_EIOS_Reflect_Short, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_int", &Python_EIOS_Reflect_Int, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_long", &Python_EIOS_Reflect_Long, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_float", &Python_EIOS_Reflect_Float, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_double", &Python_EIOS_Reflect_Double, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_string", &Python_EIOS_Reflect_String, nanobind::arg("cls"), nanobind::arg("field"))
+        .def("reflect_array", &Python_EIOS_Reflect_Array, nanobind::arg("cls"), nanobind::arg("field"), nanobind::arg("desc"))
         .def("release_objects", &Python_Reflect_Release_Objects)
         .def("__str__", &PyEIOS_Str);
 }

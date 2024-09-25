@@ -7,8 +7,10 @@
 
 #if defined(USE_PYBIND11)
     #include <memory>
-    #include <pybind11/pybind11.h>
-    #include <pybind11/stl.h>
+    #include <nanobind/nanobind.h>
+    #include <nanobind/stl/string.h>
+    #include <nanobind/stl/string_view.h>
+    #include <nanobind/stl/vector.h>
 #else
     #include <tuple>
     #include <functional>
@@ -78,14 +80,13 @@ struct PyJavaArray
 };
 
 #if defined(USE_PYBIND11)
-PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
-pybind11::object python_create_eios(EIOS* eios) noexcept;
-pybind11::object python_create_object(const std::shared_ptr<PyEIOS>& self, jobject object) noexcept;
-pybind11::object python_create_object(const std::shared_ptr<PyJavaObject>& self, jobject object) noexcept;
-pybind11::object python_create_object(const std::shared_ptr<PyJavaArray>& self, jobject object) noexcept;
-pybind11::object python_create_array(const std::shared_ptr<PyEIOS>& self, jarray array, std::size_t array_size) noexcept;
-pybind11::object python_create_array(const std::shared_ptr<PyJavaObject>& self, jarray array, std::size_t array_size) noexcept;
-pybind11::object python_create_array(const std::shared_ptr<PyJavaArray>& self, jarray array, std::size_t array_size) noexcept;
+nanobind::object python_create_eios(EIOS* eios) noexcept;
+nanobind::object python_create_object(PyEIOS* self, jobject object) noexcept;
+nanobind::object python_create_object(PyJavaObject* self, jobject object) noexcept;
+nanobind::object python_create_object(PyJavaArray* self, jobject object) noexcept;
+nanobind::object python_create_array(PyEIOS* self, jarray array, std::size_t array_size) noexcept;
+nanobind::object python_create_array(PyJavaObject* self, jarray array, std::size_t array_size) noexcept;
+nanobind::object python_create_array(PyJavaArray* self, jarray array, std::size_t array_size) noexcept;
 PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept;
 #else
 extern PyTypeObject* PyEIOS_Type() noexcept;

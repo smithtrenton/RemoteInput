@@ -21,20 +21,20 @@ void PrintPythonVersionInfo()
     fflush(stdout);
 }
 
-PYBIND11_MODULE(remote_input, module) {
+NB_MODULE(remote_input, module) {
     #if defined(DEBUG)
     PrintPythonVersionInfo();
     #endif
 
     // Register enums
-    pybind11::enum_<ImageFormat>(module, "ImageFormat")
+    nanobind::enum_<ImageFormat>(module, "ImageFormat")
         .value("BGR_BGRA", ImageFormat::BGR_BGRA)
         .value("BGRA", ImageFormat::BGRA)
         .value("RGBA", ImageFormat::RGBA)
         .value("ARGB", ImageFormat::ARGB)
         .value("ABGR", ImageFormat::ABGR);
 
-    pybind11::enum_<ReflectionType>(module, "ReflectType")
+    nanobind::enum_<ReflectionType>(module, "ReflectType")
         .value("BOOLEAN", ReflectionType::BOOL)
         .value("CHAR", ReflectionType::CHAR)
         .value("BYTE", ReflectionType::BYTE)

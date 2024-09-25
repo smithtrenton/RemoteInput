@@ -8,7 +8,7 @@
 #include "PythonCommon.hxx"
 
 #if defined(USE_PYBIND11)
-void declare_python_java_array(pybind11::module_ &module);
+void declare_python_java_array(nanobind::module_ &module);
 #else
 PyObject* Python_JavaArray_GetLength(PyJavaArray* self, PyObject* args[], Py_ssize_t args_length) noexcept;
 PyObject* Python_JavaArray_Get1D(PyJavaArray* self, PyObject* args[], Py_ssize_t args_length, PyObject* kwnames) noexcept;

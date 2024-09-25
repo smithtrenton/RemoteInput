@@ -5,133 +5,113 @@
 #include "PythonCommon.hxx"
 
 #if defined(USE_PYBIND11)
-pybind11::object python_create_eios(EIOS* eios) noexcept
+nanobind::object python_create_eios(EIOS* eios) noexcept
 {
     if (eios)
     {
-        auto py_eios_object = std::make_shared<PyEIOS>();
+        auto py_eios_object = new PyEIOS();
         py_eios_object->pid = eios->pid;
         py_eios_object->native_eios = eios;
 
-        return pybind11::cast(py_eios_object);
+        return nanobind::cast(py_eios_object);
     }
-    return pybind11::none();
+    return nanobind::none();
 }
 
-pybind11::object python_create_object(const std::shared_ptr<PyEIOS>& self, jobject object) noexcept
+nanobind::object python_create_object(PyEIOS* self, jobject object) noexcept
 {
     if (object)
     {
-        auto py_java_object = std::make_shared<PyJavaObject>();
+        auto py_java_object = new PyJavaObject();
         py_java_object->eios = self;
         py_java_object->object = object;
 
-        return pybind11::cast(py_java_object);
+        return nanobind::cast(py_java_object);
     }
-    return pybind11::none();
+    return nanobind::none();
 }
 
-pybind11::object python_create_object(const std::shared_ptr<PyJavaObject>& self, jobject object) noexcept
+nanobind::object python_create_object(PyJavaObject* self, jobject object) noexcept
 {
     if (object)
     {
-        auto py_java_object = std::make_shared<PyJavaObject>();
+        auto py_java_object = new PyJavaObject();
         py_java_object->eios = self->eios;
         py_java_object->object = object;
 
-        return pybind11::cast(py_java_object);
+        return nanobind::cast(py_java_object);
     }
-    return pybind11::none();
+    return nanobind::none();
 }
 
-pybind11::object python_create_object(const std::shared_ptr<PyJavaArray>& self, jobject object) noexcept
+nanobind::object python_create_object(PyJavaArray* self, jobject object) noexcept
 {
     if (object)
     {
-        auto py_java_object = std::make_shared<PyJavaObject>();
+        auto py_java_object = new PyJavaObject();
         py_java_object->eios = self->eios;
         py_java_object->object = object;
 
-        return pybind11::cast(py_java_object);
+        return nanobind::cast(py_java_object);
     }
-    return pybind11::none();
+    return nanobind::none();
 }
 
-pybind11::object python_create_array(const std::shared_ptr<PyEIOS>& self, jarray array, std::size_t array_size) noexcept
+nanobind::object python_create_array(PyEIOS* self, jarray array, std::size_t array_size) noexcept
 {
     if (array)
     {
-        auto py_java_array = std::make_shared<PyJavaArray>();
+        auto py_java_array = new PyJavaArray();
         py_java_array->eios = self;
         py_java_array->array = array;
         py_java_array->size = array_size;
 
-        return pybind11::cast(py_java_array);
+        return nanobind::cast(py_java_array);
     }
-    return pybind11::none();
+    return nanobind::none();
 }
 
-pybind11::object python_create_array(const std::shared_ptr<PyJavaObject>& self, jarray array, std::size_t array_size) noexcept
+nanobind::object python_create_array(PyJavaObject* self, jarray array, std::size_t array_size) noexcept
 {
     if (array)
     {
-        auto py_java_array = std::make_shared<PyJavaArray>();
+        auto py_java_array = new PyJavaArray();
         py_java_array->eios = self->eios;
         py_java_array->array = array;
         py_java_array->size = array_size;
 
-        return pybind11::cast(py_java_array);
+        return nanobind::cast(py_java_array);
     }
-    return pybind11::none();
+    return nanobind::none();
 }
 
-pybind11::object python_create_array(const std::shared_ptr<PyJavaArray>& self, jarray array, std::size_t array_size) noexcept
+nanobind::object python_create_array(PyJavaArray* self, jarray array, std::size_t array_size) noexcept
 {
     if (array)
     {
-        auto py_java_array = std::make_shared<PyJavaArray>();
+        auto py_java_array = new PyJavaArray();
         py_java_array->eios = self->eios;
         py_java_array->array = array;
         py_java_array->size = array_size;
 
-        return pybind11::cast(py_java_array);
+        return nanobind::cast(py_java_array);
     }
-    return pybind11::none();
-}
-
-PyTypeObject* PyEIOS_Type() noexcept
-{
-    return pybind11::detail::get_type_info(typeid(PyEIOS))->type;
-}
-
-PyTypeObject* PyJavaObject_Type() noexcept
-{
-    return pybind11::detail::get_type_info(typeid(PyJavaObject))->type;
-}
-
-PyTypeObject* PyJavaArray_Type() noexcept
-{
-    return pybind11::detail::get_type_info(typeid(PyJavaArray))->type;
-}
-
-std::string Py_Type_Name(PyObject* object) noexcept
-{
-    return Py_TYPE(object)->tp_name;
+    return nanobind::none();
 }
 
 PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept
 {
-    if (pybind11::isinstance<PyEIOS>(object))
+    if (nanobind::isinstance<PyEIOS>(object))
     {
         return PyRemoteInputType::EIOS;
     }
 
-    if (pybind11::isinstance<PyJavaObject>(object))
+    if (nanobind::isinstance<PyJavaObject>(object))
     {
         return PyRemoteInputType::JAVA_OBJECT;
     }
 
-    if (pybind11::isinstance<PyJavaArray>(object))
+    if (nanobind::isinstance<PyJavaArray>(object))
     {
         return PyRemoteInputType::JAVA_ARRAY;
     }
@@ -146,6 +126,8 @@ PyEIOS::~PyEIOS()
         EIOS_ReleaseTarget(this->native_eios);
         this->native_eios = nullptr;
     }
+
+    delete this;
 }
 
 PyJavaObject::~PyJavaObject()
@@ -157,6 +139,8 @@ PyJavaObject::~PyJavaObject()
         this->eios = nullptr;
         this->object = nullptr;
     }
+
+    delete this;
 }
 
 PyJavaArray::~PyJavaArray()
@@ -168,6 +152,8 @@ PyJavaArray::~PyJavaArray()
         this->array = nullptr;
         this->size = 0;
     }
+
+    delete this;
 }
 #else
 PyRemoteInputType GetPythonObjectType(PyObject* object) noexcept

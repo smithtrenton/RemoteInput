@@ -8,7 +8,7 @@
 #include "PythonCommon.hxx"
 
 #if defined(USE_PYBIND11)
-void declare_python_eios(pybind11::module_ &module);
+void declare_python_eios(nanobind::module_ &module);
 #else
 PyObject* Python_EIOS_Inject(PyEIOS* self, PyObject* args[], Py_ssize_t args_length) noexcept;
 PyObject* Python_EIOS_Inject_PID(PyEIOS* self, PyObject* args[], Py_ssize_t args_length) noexcept;
